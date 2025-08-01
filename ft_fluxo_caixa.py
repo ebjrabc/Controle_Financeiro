@@ -1,4 +1,19 @@
+import os
+import subprocess
+import sys
 
+# ✅ Instala o Streamlit se necessário
+try:
+    import streamlit
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "streamlit"])
+
+# 📁 Garante que a pasta Dados existe
+os.makedirs("Dados", exist_ok=True)
+db_path = os.path.join("Dados", "financeiro.db")
+
+# 📝 Código do app principal
+app_code = f'''
 import streamlit as st
 import sqlite3
 import subprocess
@@ -6,11 +21,11 @@ import sys
 import time
 from datetime import date
 
-conn = sqlite3.connect(r"Dados\financeiro.db", check_same_thread=False)
+conn = sqlite3.connect(r"{db_path}", check_same_thread=False)
 cursor = conn.cursor()
 
 # 🛠️ Criação da tabela de fluxo de caixa
-cursor.execute("""
+cursor.execute(\"\"\"
     CREATE TABLE IF NOT EXISTS fluxo_caixa (
         cd_transacao INTEGER PRIMARY KEY AUTOINCREMENT,
         cd_categoria INTEGER,
@@ -20,30 +35,30 @@ cursor.execute("""
         vl_valor_fluxo DOUBLE NOT NULL,
         FOREIGN KEY (cd_categoria) REFERENCES categoria(cd_categoria)
     )
-""")
+\"\"\")
 conn.commit()
 
 st.set_page_config(page_title="💰 Fluxo de Caixa", layout="wide")
 
 # 🎨 Estilo visual
-st.markdown("""
+st.markdown(\"\"\"
     <style>
-    .block-container {
+    .block-container {{
         padding-top: 1rem;
-    }
-    .titulo-menor {
+    }}
+    .titulo-menor {{
         font-size: 22px;
         font-weight: bold;
         color: #333333;
         margin-bottom: 5px;
-    }
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    }}
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
+    header {{visibility: hidden;}}
     </style>
     <div class="titulo-menor">💰 Fluxo de Caixa</div>
     <br>
-""", unsafe_allow_html=True)
+\"\"\", unsafe_allow_html=True)
 
 # 🔍 Carrega categorias ativas
 categorias_ativas = cursor.execute(
@@ -73,7 +88,7 @@ if categorias_ativas:
     if "nota_fiscal" not in st.session_state:
         st.session_state.nota_fiscal = 0
     nota_fiscal = st.number_input("Número da Nota Fiscal (opcional)",key="nota_fiscal", step=1, format="%d") 
-    meses = {
+    meses = {{
         1: "Janeiro",
         2: "Fevereiro",
         3: "Março",
@@ -86,7 +101,7 @@ if categorias_ativas:
         10: "Outubro",
         11: "Novembro",
         12: "Dezembro"
-    }
+    }}
 
     anos = list(range(2000, date.today().year + 1))
 
@@ -94,7 +109,7 @@ if categorias_ativas:
     mes_selecionado = col1.selectbox("Mês da Transação", options=list(meses.keys()), format_func=lambda x: meses[x])
     ano_selecionado = col2.selectbox("Ano da Transação", options=anos, index=anos.index(date.today().year))
 
-    data_transacao = f"{mes_selecionado:02d}-{ano_selecionado:04d}"
+    data_transacao = f"{{mes_selecionado:02d}}-{{ano_selecionado:04d}}"
     if "descricao" not in st.session_state:
         st.session_state.descricao = "opcional"
     descricao = st.text_input("Descrição", key="descricao")
@@ -131,7 +146,7 @@ if categorias_ativas:
                     st.rerun()
                     
                 except Exception as e:
-                    st.error(f"❌ Erro ao incluir transação: {e}")
+                    st.error(f"❌ Erro ao incluir transação: {{e}}")
                     time.sleep(3)  # ⏸️ Pausa maior para o usuário ler o erro
             else:
                 st.warning("⚠️ Preencha os campos obrigatórios.")
@@ -150,11 +165,11 @@ if categorias_ativas:
             st.success("✅ Relatório aberto em nova aba. Verifique seu navegador.")
 
     if st.session_state.get("confirmar_exclusao", False):
-        transacoes = cursor.execute("""
+        transacoes = cursor.execute(\"\"\"
             SELECT cd_transacao, dt_transacao, vl_valor_fluxo FROM fluxo_caixa ORDER BY dt_transacao DESC
-        """).fetchall()
+        \"\"\").fetchall()
         if transacoes:
-            transacao_id = st.selectbox("Selecione a transação para excluir", options=["{} | {} | R$ {:.2f}".format(trans[0], trans[1], trans[2]) for trans in transacoes])
+            transacao_id = st.selectbox("Selecione a transação para excluir", options=["{{}} | {{}} | R$ {{:.2f}}".format(trans[0], trans[1], trans[2]) for trans in transacoes])
             cd_transacao = int(transacao_id.split(" | ")[0])
             col_confirmar, col_cancelar = st.columns(2)
             with col_confirmar:
@@ -174,13 +189,13 @@ if categorias_ativas:
 
     if st.session_state.get("alterar_transacao", False):
         st.subheader("✏️ Alterar Transação")
-        transacoes = cursor.execute("""
+        transacoes = cursor.execute(\"\"\"
             SELECT cd_transacao, nr_nota_fiscal, dt_transacao, nm_descricao, cd_categoria, vl_valor_fluxo
             FROM fluxo_caixa ORDER BY dt_transacao DESC
-        """).fetchall()
+        \"\"\").fetchall()
 
         if transacoes:
-            transacao_opcoes = ["{} | {} | R$ {:.2f}".format(t[0], t[2], t[5]) for t in transacoes]
+            transacao_opcoes = ["{{}} | {{}} | R$ {{:.2f}}".format(t[0], t[2], t[5]) for t in transacoes]
             transacao_escolhida = st.selectbox("Selecione a transação para alterar", options=transacao_opcoes)
             transacao_dados = [t for t in transacoes if str(t[0]) == transacao_escolhida.split(" | ")[0]][0]
 
@@ -209,7 +224,7 @@ if categorias_ativas:
                 st.text_input("Novo tipo", value=novo_tipo, disabled=True)
 
                 if st.button("✅ Confirmar Alteração"):
-                    cursor.execute("""
+                    cursor.execute(\"\"\"
                         UPDATE fluxo_caixa
                         SET nr_nota_fiscal = ?,
                             dt_transacao = ?,
@@ -217,7 +232,7 @@ if categorias_ativas:
                             cd_categoria = ?,
                             vl_valor_fluxo = ?
                             WHERE cd_transacao = ?
-                    """, (
+                    \"\"\", (
                         novo_nota if novo_nota else None,
                         nova_data,
                         nova_descricao,
@@ -239,3 +254,11 @@ else:
     st.stop()
 
 conn.close()
+'''
+
+# 📝 Cria o arquivo app.py
+with open("app.py", "w", encoding="utf-8") as f:
+    f.write(app_code)
+
+# 🚀 Executa o app
+subprocess.run([sys.executable, "-m", "streamlit", "run", "app.py"])
