@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Controle de Scripts</title>
+    <style>
+        body {
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .botao-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .botao {
+            background-color: #0078d4;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .botao:hover {
+            background-color: #005a9e;
+        }
+
+        .botao:active {
+            background-color: #004578;
+        }
+
+        .mensagem {
+            margin-top: 20px;
+            color: #0078d4;
+            font-weight: bold;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <h1>Controle de Execução de Scripts</h1>
+    <div class="botao-container">
+        <a href="/executar/cadastro" class="botao">Executar Cadastro</a>
+        <a href="/executar/fluxo" class="botao">Executar Fluxo de Caixa</a>
+        <a href="/executar/rel_categoria" class="botao">Relatório por Categoria</a>
+        <a href="/executar/rel_fluxo" class="botao">Relatório de Fluxo</a>
+    </div>
+
+    {% if mensagem %}
+        <div class="mensagem">{{ mensagem }}</div>
+    {% endif %}
+
+    <footer>© Ernesto - Sistema de Controle</footer>
+</body>
+</html>
