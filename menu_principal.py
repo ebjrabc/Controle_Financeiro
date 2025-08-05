@@ -2,7 +2,7 @@ import streamlit as st
 from modulo_categorias import dim_cad_categoria
 from modulo_relatorio import dim_rel_categoria
 from modulo_fluxo_caixa import ft_fluxo_caixa
-from modulo_relatorio import dim_cad_ativos
+#from modulo_relatorio import dim_cad_ativos
 
 st.set_page_config(page_title="📋 Menu Principal", layout="wide")
 
