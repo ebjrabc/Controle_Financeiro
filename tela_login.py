@@ -125,7 +125,7 @@ if st.session_state.pagina == "login":
     aplicar_estilo()
 
     if st.session_state.subpagina == "login":
-        st.markdown("<h3>🔐 Login do Sistema</h3>", unsafe_allow_html=True)
+        st.markdown("<h4>🔐 Login do Sistema</h4>", unsafe_allow_html=True)
 
         login = st.text_input("Login", key="login_usuario")
         senha = st.text_input("Senha", type="password", key="login_senha")
@@ -150,12 +150,13 @@ if st.session_state.pagina == "login":
                 st.rerun()
 
     elif st.session_state.subpagina == "cadastro":
-        st.markdown("<h3>📝 Cadastro de Novo Usuário</h3>", unsafe_allow_html=True)
+        st.markdown("<h4>📝 Cadastro de Novo Usuário</h4>", unsafe_allow_html=True)
         st.caption("🔒 A senha deve conter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial.")
 
         nome = st.text_input("Nome", key="cadastro_nome")
         sobrenome = st.text_input("Sobrenome", key="cadastro_sobrenome")
         novo_login = st.text_input("Login de acesso", key="cadastro_login")
+        st.caption("🔒 A senha deve conter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial.")
         nova_senha = st.text_input("Senha", type="password", key="cadastro_senha")
 
         col_btn = st.columns(3)
