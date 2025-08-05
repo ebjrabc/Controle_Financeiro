@@ -1,3 +1,5 @@
+def def dim_cad_ativos():
+
 import streamlit as st
 
 # 🖥️ Título da página
