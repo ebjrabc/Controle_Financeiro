@@ -42,6 +42,9 @@ def aplicar_estilo(usuario=None):
                 margin-top: 8px;
             }}
         }}
+        MainMenu {{visibility: hidden;}}
+        footer {{visibility: hidden;}}
+        header {{visibility: hidden;}}
         </style>
         {f"<div class='user-info'>👤 {usuario}</div>" if usuario else ""}
     """, unsafe_allow_html=True)
