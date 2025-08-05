@@ -1,4 +1,4 @@
-def def dim_cad_ativos():
+def dim_cad_ativos():
 
 import streamlit as st
 
@@ -11,5 +11,6 @@ st.markdown("""
 
 Estamos realizando melhorias no sistema.  
 Por favor, volte mais tarde.
+
 
 """, unsafe_allow_html=True)
