@@ -30,7 +30,7 @@ def dim_rel_categoria():
     """, unsafe_allow_html=True)
 
     # 🔗 Conecta ao banco
-    conn = sqlite3.connect(r'Dados\\financeiro.db', check_same_thread=False)
+    conn = sqlite3.connect('Controle_Financeiro/Dados/financeiro.db', check_same_thread=False)
     df = pd.read_sql_query('SELECT * FROM categoria', conn)
     conn.close()
 
