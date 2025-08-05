@@ -1,9 +1,7 @@
-# menu_principal.py
 import streamlit as st
 from modulo_categorias import dim_cad_categoria
 from modulo_relatorio import dim_rel_categoria
 from modulo_fluxo_caixa import ft_fluxo_caixa
-
 
 def exibir_menu(usuario_logado):
     st.set_page_config(page_title="📋 Menu Principal", layout="wide")
@@ -35,8 +33,10 @@ def exibir_menu(usuario_logado):
     # Menu
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        if st.button("🏠 Tela Inicial"):
-            st.session_state["tela"] = "inicio"
+        if st.button("🚪 Sair"):
+            # Limpa sessão e redireciona para login
+            st.session_state.clear()
+            st.rerun()
     with col2:
         if st.button("📂 Cadastro de Categorias"):
             st.session_state["tela"] = "categorias"
@@ -50,7 +50,7 @@ def exibir_menu(usuario_logado):
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # Conteúdo
-    if st.session_state["tela"] == "inicio":
+    if st.session_state.get("tela") == "inicio":
         st.info("👋 Bem-vindo ao sistema financeiro. Escolha uma opção acima.")
     elif st.session_state["tela"] == "categorias":
         dim_cad_categoria(st.session_state.get("codigo_usuario"))
