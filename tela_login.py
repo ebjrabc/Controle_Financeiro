@@ -37,6 +37,10 @@ def aplicar_estilo(usuario=None):
                 right: 10px;
                 padding: 4px 8px;
             }}
+            .stButton > button {{
+                width: 100% !important;
+                margin-top: 8px;
+            }}
         }}
         </style>
         {f"<div class='user-info'>👤 {usuario}</div>" if usuario else ""}
@@ -121,33 +125,32 @@ if st.session_state.pagina == "login":
     aplicar_estilo()
 
     if st.session_state.subpagina == "login":
-        st.markdown("<h1>🔐 Login do Sistema</h1>", unsafe_allow_html=True)
+        st.markdown("<h3>🔐 Login do Sistema</h3>", unsafe_allow_html=True)
 
         login = st.text_input("Login", key="login_usuario")
         senha = st.text_input("Senha", type="password", key="login_senha")
 
-        st.button("Entrar", on_click=lambda: (
-            st.session_state.update({
-                "resultado_login": autenticar_usuario(login, senha)
-            })
-        ))
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Entrar", use_container_width=True):
+                resultado = autenticar_usuario(login, senha)
+                if resultado == "nao_cadastrado":
+                    st.warning("Usuário não cadastrado.")
+                elif resultado == "senha_incorreta":
+                    st.error("Senha incorreta.")
+                else:
+                    st.session_state.codigo_usuario = resultado["codigo_usuario"]
+                    st.session_state.usuario_logado = resultado["nome_completo"]
+                    st.session_state.pagina = "menu"
+                    st.rerun()
 
-        if "resultado_login" in st.session_state:
-            resultado = st.session_state.resultado_login
-            if resultado == "nao_cadastrado":
-                st.warning("Usuário não cadastrado.")
-            elif resultado == "senha_incorreta":
-                st.error("Senha incorreta.")
-            else:
-                st.session_state.codigo_usuario = resultado["codigo_usuario"]
-                st.session_state.usuario_logado = resultado["nome_completo"]
-                st.session_state.pagina = "menu"
+        with col2:
+            if st.button("Cadastrar", use_container_width=True):
+                st.session_state.subpagina = "cadastro"
                 st.rerun()
 
-        st.button("Cadastrar", on_click=lambda: st.session_state.update({"subpagina": "cadastro"}))
-
     elif st.session_state.subpagina == "cadastro":
-        st.markdown("<h1>📝 Cadastro de Novo Usuário</h1>", unsafe_allow_html=True)
+        st.markdown("<h3>📝 Cadastro de Novo Usuário</h3>", unsafe_allow_html=True)
         st.caption("🔒 A senha deve conter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial.")
 
         nome = st.text_input("Nome", key="cadastro_nome")
@@ -155,19 +158,21 @@ if st.session_state.pagina == "login":
         novo_login = st.text_input("Login de acesso", key="cadastro_login")
         nova_senha = st.text_input("Senha", type="password", key="cadastro_senha")
 
-        if st.button("Confirmar Cadastro"):
-            if not nome or not sobrenome or not novo_login or not nova_senha:
-                st.warning("Preencha todos os campos.")
-            elif not senha_forte(nova_senha):
-                st.error("A senha não atende aos requisitos de segurança.")
-            else:
-                resultado = cadastrar_usuario(nome, sobrenome, novo_login, nova_senha)
-                if resultado == "sucesso":
-                    st.success("Usuário cadastrado com sucesso! Redirecionando para a tela de login...")
-                    st.session_state.subpagina = "login"
-                    st.rerun()
-                elif resultado == "login_existente":
-                    st.error("Login já existe. Escolha outro.")
+        col_btn = st.columns(3)
+        with col_btn[1]:
+            if st.button("Confirmar Cadastro", use_container_width=True):
+                if not nome or not sobrenome or not novo_login or not nova_senha:
+                    st.warning("Preencha todos os campos.")
+                elif not senha_forte(nova_senha):
+                    st.error("A senha não atende aos requisitos de segurança.")
+                else:
+                    resultado = cadastrar_usuario(nome, sobrenome, novo_login, nova_senha)
+                    if resultado == "sucesso":
+                        st.success("Usuário cadastrado com sucesso! Redirecionando para a tela de login...")
+                        st.session_state.subpagina = "login"
+                        st.rerun()
+                    elif resultado == "login_existente":
+                        st.error("Login já existe. Escolha outro.")
 
 # 📋 Menu principal
 elif st.session_state.pagina == "menu":
